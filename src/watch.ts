@@ -7,11 +7,11 @@ import chalk from 'chalk'
 import { isTxHash } from './utils/is-tx-hash'
 import { getWeb3 } from './utils/web3'
 import { formatGasPrice } from './utils/format'
-import { resolveFunctionSignature } from './utils/resolve-function-signature'
 
 import { getBlocksAgo } from './elements/blocks-ago'
 import { getAddressTypePadded } from './elements/address-type'
-import { getAddressBalanceFixedWith } from './elements/address-balance'
+import { getBalance, getBalanceFixedWidth } from './elements/address-balance'
+import { getInputData } from './elements/input-data'
 
 import { EthereumNetwork } from './globals'
 
@@ -55,45 +55,49 @@ export const watch = async (txHash: string): Promise<void> => {
     R.pluck('gasPrice')
   )(block.transactions)
 
-  const transactionStatus = txReceipt.status ? chalk.green('SUCCEEDED') : chalk.red('FAILED')
-  const functionName = await resolveFunctionSignature(tx.input)
+  const transactionStatus = txReceipt.status ? chalk.green`SUCCEEDED` : chalk.red`FAILED`
 
-
-  // TODO: at timestamp with (X secs ago). Make this a top header with block number
-  // TODO: add block details: gas consumed, #txs, avg gas price
   // TODO: add historic gas stats from ethgasstation for that time (-5,+5min)
-  // TODO: lookup for input hash --> can we show function name?
   // TODO: details like: storage written, read, released, selfdestruct, #funccalls, #externalcalls
   // TODO: clarify difference between txreceipt.gasUsed and tx.gas
   // TODO: show current balance of from/to, but also balance of the time of the tx
+  // TODO: show emitted logs of a transaction
+  // TODO: From/To details: activity indicator, balance back then/balance now, #tx since then, #tx overall, tx every Xh on avg, total ETH moved. Activity last 1h,24h,1d,1w,1m,1y,alltime --> activity horizontal bar with dots
+  // TODO: gas usage in the block: bar graph (limit, used, this tx) --> With correct x-offset of `this tx`?
+  // TODO: for contracts get exposed functions (parse all tx of this contract with call frequency)
+  // TODO: token ownership information for addresses?
+  // TODO: show line numbers in data output
+
   const txMessage = `
     Transaction ${transactionStatus}
 
-            ${getAddressTypePadded(codeFrom)}${getAddressBalanceFixedWith(balanceFrom)}
-      from: ${chalk.blue(tx.from)}
-        ↓   ${tx.value} ETH
-       to:  ${chalk.red(tx.to)}
-            ${getAddressTypePadded(codeTo)}${getAddressBalanceFixedWith(balanceTo)}
+           ${getAddressTypePadded(codeFrom)}${getBalanceFixedWidth(balanceFrom)}
+     from: ${chalk.cyanBright(tx.from)}
+       ↓   ${getBalance(tx.value)}
+      to:  ${chalk.cyanBright(tx.to)}
+           ${getAddressTypePadded(codeTo)}${getBalanceFixedWidth(balanceTo)}
 
-    at time:  ${new Date(block.timestamp * 1000).toISOString()} (${moment.unix(block.timestamp).fromNow()})
-    at block: ${tx.blockNumber}                  (${getBlocksAgo(tx.blockNumber, blockLatest.number)})
-              ${block.transactions.length} txs, #uncles: ${block.uncles.length}
-              ${block.gasUsed}/${block.gasLimit} gas used, block Ø: ${gasPriceAverage}
-              block hash: ${tx.blockHash}
+    Time:  ${new Date(block.timestamp * 1000).toISOString()} (${moment.unix(block.timestamp).fromNow()})
+    Block: ${tx.blockNumber}                  (${getBlocksAgo(tx.blockNumber, blockLatest.number)})
+           ${block.transactions.length} txs, #uncles: ${block.uncles.length}
+           ${block.gasUsed}/${block.gasLimit} (${(100 * block.gasUsed / block.gasLimit).toFixed(2)}%) gas used, block Ø: ${gasPriceAverage}
+           block hash: ${tx.blockHash}
+    Fee:   ${tx.gas * Number(tx.gasPrice)} (gas: ${tx.gas},${txReceipt.gasUsed} @ ${formatGasPrice(tx.gasPrice)})
 
-    fee:      ${tx.gas * Number(tx.gasPrice)} (gas: ${tx.gas},${txReceipt.gasUsed} @ ${formatGasPrice(tx.gasPrice)}) (cumulative: ${txReceipt.cumulativeGasUsed})
-
-    nonce: ${tx.nonce}
+    ${await getInputData(tx.input)}
+    ${txReceipt.contractAddress ? `⟶ Contract created: ${txReceipt.contractAddress}` : ''}
+    Nonce: ${tx.nonce}
     transactionIndex: ${tx.transactionIndex}
     r: ${tx.r}
     s: ${tx.s}
     v: ${tx.v}
-
-    input: ${tx.input} ${functionName ? chalk.green(`⟶ ${functionName}`) : '(unkown signature)'}
-
-    created contract at: ${txReceipt.contractAddress}
   `
 
 
   spinner.info(txMessage)
 }
+
+
+console.log(chalk.keyword('orange')('Yay for orange colored text!'));
+console.log(chalk.rgb(123, 45, 67).underline('Underlined reddish color'));
+console.log(chalk.hex('#DEADED').dim('Bold gray!'));
