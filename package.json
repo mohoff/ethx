@@ -11,8 +11,8 @@
   "scripts": {
     "health": "yarn lint && yarn test && yarn todo",
     "lint": "yarn lint:ts && yarn lint:json && yarn lint:markdown",
-    "lint:ts": "eslint --ext [.ts] src scripts",
-    "lint:ts:fix": "eslint --fix --ext [.ts] src scripts",
+    "lint:ts": "eslint --ext [.ts] src",
+    "lint:ts:fix": "eslint --fix --ext [.ts] src",
     "lint:json": "jsonlint-cli package.json src/**/*.json",
     "lint:markdown": "markdownlint **/*.md --ignore node_modules --ignore CHANGELOG.md --ignore .gitlab",
     "release": "standard-version --message \"chore(release): %s [ci-release]\"",
@@ -26,8 +26,8 @@
   "devDependencies": {
     "@commitlint/config-conventional": "^8.2.0",
     "@types/chalk": "^2.2.0",
-    "@types/moment": "^2.13.0",
     "@types/node": "^12.7.8",
+    "@types/numeral": "^0.0.26",
     "@types/ora": "^3.2.0",
     "@types/ramda": "^0.26.25",
     "@types/web3": "^1.0.20",
@@ -57,9 +57,10 @@
     "axios": "^0.19.0",
     "bignumber.js": "^9.0.0",
     "chalk": "^2.4.2",
+    "date-fns": "^2.4.1",
     "dotenv": "^8.1.0",
     "ethers": "^4.0.37",
-    "moment": "^2.24.0",
+    "numeral": "^2.0.6",
     "ora": "^4.0.2",
     "ramda": "^0.26.1",
     "web3": "^1.2.1"

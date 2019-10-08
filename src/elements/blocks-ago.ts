@@ -1,6 +1,7 @@
-
-
-export const getBlocksAgo = (txBlockNumber: number, currentBlockNumber: number): string => {
+export const getBlocksAgo = (
+  txBlockNumber: number,
+  currentBlockNumber: number
+): string => {
   if (!txBlockNumber || !currentBlockNumber) {
     return 'Unable to fetch block difference'
   }
@@ -11,5 +12,7 @@ export const getBlocksAgo = (txBlockNumber: number, currentBlockNumber: number):
 
   const blockNumberDiff = currentBlockNumber - txBlockNumber
 
-  return `${blockNumberDiff} block${blockNumberDiff > 1 ? 's' : ''} ago`
+  return `${blockNumberDiff.toLocaleString()} block${
+    blockNumberDiff > 1 ? 's' : ''
+  } ago`
 }

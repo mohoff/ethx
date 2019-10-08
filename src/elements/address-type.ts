@@ -2,7 +2,7 @@ import chalk from 'chalk'
 
 enum ContractType {
   EOA = 'EOA',
-  CONTRACT = 'Contract'
+  CONTRACT = 'Contract',
 }
 
 export const getAddressType = (codeAtAddress: string): ContractType => {

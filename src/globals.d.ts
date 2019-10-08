@@ -1,5 +1,3 @@
-
-
 export const enum EthereumNetwork {
   MAINNET = 'mainnet',
   ROPSTEN = 'ropsten',
