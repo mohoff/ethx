@@ -21,7 +21,7 @@ const greyOutZeros = (bytes32OrMore: string, minZeroChain = 3): string => {
       return chalk.grey(zerosAdded) + char
     }
 
-    return numSubsequentZeros + char
+    return zerosAdded + char
   }
 
   const result = bytes32.split('').reduce(
@@ -85,8 +85,8 @@ export const getInputData = async (
 
   const header = `${formatHex(functionSignature)} ${
     functionName
-      ? chalk.green`⟶ ${functionName}`
-      : chalk.grey`(unkown signature)`
+      ? chalk.green('⟶ ' + functionName)
+      : chalk.grey('(unkown signature)')
   }`
 
   if (inputData.length === 10) {

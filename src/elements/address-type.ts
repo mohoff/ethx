@@ -9,7 +9,13 @@ export const getAddressType = (codeAtAddress: string): ContractType => {
   return codeAtAddress === '0x' ? ContractType.EOA : ContractType.CONTRACT
 }
 
-export const getAddressTypePadded = (codeAtAddress: string): string => {
+export const getAddressTypePadded = (
+  codeAtAddress: string | undefined
+): string => {
+  if (!codeAtAddress) {
+    return '(unknown)'
+  }
+
   const addressType = getAddressType(codeAtAddress)
   const padLength = addressType === ContractType.EOA.toString() ? 5 : 0
 

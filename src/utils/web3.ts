@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 
 import config from '../config.json'
-import { EthereumNetwork } from '../globals'
+import { EthereumNetwork } from '../types'
 
 export const getWeb3 = (
   network: EthereumNetwork = EthereumNetwork.MAINNET
