@@ -26,7 +26,7 @@ interface TransactionContext {
 
 export const aggregateEthereumData = async (
   txHash: string
-): Promise<TransactionContext> => {
+): Promise<TransactionContext | undefined> => {
   if (R.isNil(txHash) || !R.is(String, txHash)) {
     throw new Error('Invalid input')
   }
@@ -40,9 +40,7 @@ export const aggregateEthereumData = async (
   const tx = await web3.eth.getTransaction(txHash)
 
   if (!tx) {
-    throw new Error(
-      `Transaction could not be retrieved. Is it pending? ${txHash}`
-    )
+    return undefined
   }
 
   const [
