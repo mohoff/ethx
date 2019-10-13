@@ -1,9 +1,9 @@
 import R from 'ramda'
 
-import { getWeb3 } from './utils/web3'
-import { isTxHash } from './utils/is-tx-hash'
+import { getWeb3 } from './web3'
+import { isTxHash } from '../utils/is-tx-hash'
 
-import { EthereumNetwork } from './types'
+import { EthereumNetwork } from '../types'
 
 import { TransactionReceipt } from 'web3/types'
 import { Block, Transaction } from 'web3/eth/types'
@@ -24,7 +24,7 @@ interface TransactionContext {
   txReceipt: TransactionReceipt
 }
 
-export const aggregateEthereumData = async (
+export const aggregateTransactionData = async (
   txHash: string
 ): Promise<TransactionContext | undefined> => {
   if (R.isNil(txHash) || !R.is(String, txHash)) {

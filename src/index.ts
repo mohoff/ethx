@@ -12,7 +12,7 @@ enum COMMANDS {
   AWAIT = 'await',
 }
 
-// Hack to get unparsed hex string. By default, yargs parses hex to numbers.
+// Hack to get unparsed hex string. By default, yargs parses hex strings to numbers.
 const txHashAsString = R.head(
   R.without(Object.values(COMMANDS), process.argv.slice(2))
 )

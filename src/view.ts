@@ -1,7 +1,7 @@
 import ora from 'ora'
 import chalk from 'chalk'
 
-import { aggregateEthereumData } from './aggregate'
+import { aggregateTransactionData } from './web3/aggregate-tx-data'
 
 import { formatBytes32Hex, formatWeiToEther } from './utils/format'
 
@@ -22,9 +22,9 @@ import { getInputData } from './elements/input-data'
 import { getSignature } from './elements/signature'
 
 export const view = async (txHash: string): Promise<void> => {
-  const spinner = ora(`Watching transaction ${txHash}`).start()
+  const spinner = ora(`Fetching transaction details`).start()
 
-  const data = await aggregateEthereumData(txHash)
+  const data = await aggregateTransactionData(txHash)
   if (data === undefined) {
     spinner.fail(
       chalk.red(`Transaction ${txHash} not found. Has it been mined?\n`)
@@ -35,17 +35,9 @@ export const view = async (txHash: string): Promise<void> => {
 
   const { from, to, block, tx, txReceipt } = data
 
-  // TODO: add historic gas stats from ethgasstation for that time (-5,+5min)
-  // TODO: From/To details: activity indicator, #tx since then, #tx overall, tx every Xh on avg, total ETH moved. Activity last 1h,24h,1d,1w,1m,1y,alltime --> activity horizontal bar with dots
-  // TODO: gas usage in the block: bar graph (limit, used, this tx) --> With correct x-offset of `this tx`?
-  // TODO: for contracts get exposed functions (parse all tx of this contract with call frequency)
-  // TODO: show line numbers in data output
-  // TODO: make use of ${tx.transactionIndex}
-  // TODO: tx.input: When functionName is known with 1+ params, the value type for the first few lines of hex can be known
-
   // prettier-ignore
   const txMessage = `
-    ${getStatus(txReceipt.status)}
+    ${getStatus(txHash, txReceipt.status)}
 
            ${getAddressTypePadded(from.code)}${getAddressBalanceRightAligned(from.balanceAtTx)} ${getAddressBalanceNow(from.balanceNow)}
      from: ${chalk.bold.cyanBright(tx.from)} ${getNumberOfTransactions(tx.nonce)}
@@ -71,8 +63,8 @@ export const view = async (txHash: string): Promise<void> => {
       ${getSignature(tx)}
   `
 
-  const output = `Mined transaction ${txHash}
-  ${txMessage} `
+  const output = `Fetched transaction details
+  ${txMessage}`
 
   txReceipt.status ? spinner.succeed(output) : spinner.fail(output)
 }
