@@ -2,32 +2,20 @@ import * as yargs from 'yargs'
 import R from 'ramda'
 import chalk from 'chalk'
 
-import { view as viewTx } from './view'
+import { view as viewTx, VIEW_TIMEOUT_IN_SECONDS } from './view'
 import { await as awaitTx } from './await'
 
-import { isTxHash } from './utils/is-tx-hash'
+import { validateTxHash } from './utils/validate-tx-hash'
+import { timeoutAfter } from './utils/timeout-after'
 
 enum COMMANDS {
   VIEW = 'view',
   AWAIT = 'await',
 }
 
-// Hack to get unparsed hex string. By default, yargs parses hex strings to numbers.
 const txHashAsString = R.head(
   R.without(Object.values(COMMANDS), process.argv.slice(2))
 )
-
-const validateTransactionHash = ({
-  transactionHash,
-}: Record<'transactionHash', string | undefined>): true => {
-  if (isTxHash(transactionHash)) {
-    return true
-  }
-
-  throw new Error(
-    chalk.red(`${transactionHash} is not a valid transaction hash\n`)
-  )
-}
 
 const argv = yargs
   .command(
@@ -38,9 +26,17 @@ const argv = yargs
         .positional('transactionHash', {
           type: 'string',
         })
-        .check(validateTransactionHash)
+        .check(validateTxHash)
+        // If the alias of this command is used, the transaction hash (hex) is interpreted as number.
+        // As a fix, we replace here the number representation by the manually parsed string representation.
         .coerce({
           transactionHash: () => txHashAsString,
+        })
+        .option('timeout', {
+          alias: 't',
+          type: 'number',
+          describe: 'Timeout in seconds until this command fails',
+          default: VIEW_TIMEOUT_IN_SECONDS,
         })
     }
   )
@@ -55,25 +51,46 @@ const argv = yargs
         .coerce({
           transactionHash: () => txHashAsString,
         })
-        .check(validateTransactionHash)
+        .check(validateTxHash)
         .option('confirmations', {
           alias: 'c',
           type: 'number',
           describe: 'Number of confirmations to wait for',
-          demandCommand: true,
+          demandOption: true,
+        })
+        .option('timeout', {
+          alias: 't',
+          type: 'number',
+          describe: 'Timeout in seconds until this command fails',
+          // The termination of this command is primarily controlled with --confirmations
+          default: Infinity,
         })
     }
   ).argv
 
 const handleCliInput = async (): Promise<void> => {
+  const timeout = timeoutAfter(argv.timeout as number)
+
   if (argv._[0] === COMMANDS.VIEW || argv._.length === 0) {
-    await viewTx(argv.transactionHash as string)
-    process.exit(0)
+    await timeout(viewTx)(
+      argv.transactionHash as string,
+      argv.timeout as number
+    )
   } else if (argv._[0] === COMMANDS.AWAIT) {
-    await awaitTx(argv.transactionHash as string, argv.confirmations as number)
+    await timeout(awaitTx)(
+      argv.transactionHash as string,
+      argv.confirmations as number
+    )
   }
 }
 ;(async function main(): Promise<void> {
-  await handleCliInput()
+  try {
+    await handleCliInput()
+  } catch (error) {
+    console.log('\n\n', chalk.red(error), '\n')
+
+    process.exit(1)
+  }
+
   process.exit(0)
 })()

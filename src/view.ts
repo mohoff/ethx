@@ -4,6 +4,7 @@ import chalk from 'chalk'
 import { aggregateTransactionData } from './web3/aggregate-tx-data'
 
 import { formatBytes32Hex, formatWeiToEther } from './utils/format'
+import { timeoutAfter } from './utils/timeout-after'
 
 import { getStatus } from './elements/status'
 import { getTime } from './elements/time'
@@ -21,16 +22,21 @@ import {
 import { getInputData } from './elements/input-data'
 import { getSignature } from './elements/signature'
 
-export const view = async (txHash: string): Promise<void> => {
+export const VIEW_TIMEOUT_IN_SECONDS = 60
+
+export const view = async (
+  txHash: string,
+  timeoutInSeconds: number = VIEW_TIMEOUT_IN_SECONDS
+): Promise<void> => {
   const spinner = ora(`Fetching transaction details`).start()
 
-  const data = await aggregateTransactionData(txHash)
-  if (data === undefined) {
-    spinner.fail(
-      chalk.red(`Transaction ${txHash} not found. Has it been mined?\n`)
-    )
+  const aggregateWithTimeout = timeoutAfter(timeoutInSeconds)(
+    aggregateTransactionData
+  )
+  const data = await aggregateWithTimeout(txHash)
 
-    return process.exit(1)
+  if (data === undefined) {
+    throw new Error(`Transaction ${txHash} not found. Has it been mined?`)
   }
 
   const { from, to, block, tx, txReceipt } = data

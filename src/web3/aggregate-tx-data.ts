@@ -1,7 +1,7 @@
 import R from 'ramda'
 
 import { getWeb3 } from './web3'
-import { isTxHash } from '../utils/is-tx-hash'
+import { isTxHash } from '../utils/validate-tx-hash'
 
 import { EthereumNetwork } from '../types'
 

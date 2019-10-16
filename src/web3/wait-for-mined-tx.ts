@@ -7,15 +7,13 @@ import { Transaction } from 'web3/eth/types'
 import Web3 from 'web3'
 import { EthereumNetwork } from '../types'
 
-const TIMEOUT_IN_SECONDS = 3600
-
-const timeoutAfterSeconds = (timeoutInSeconds: number): Promise<void> =>
-  new Promise((_, reject): void => {
-    const id = setTimeout(() => {
-      clearTimeout(id)
-      reject(`Timeout after ${timeoutInSeconds} seconds`)
-    }, timeoutInSeconds * 1000)
-  })
+// const timeoutAfterSeconds = (timeoutInSeconds: number): Promise<void> =>
+//   new Promise((_, reject): void => {
+//     const id = setTimeout(() => {
+//       clearTimeout(id)
+//       reject(`Timeout after ${timeoutInSeconds} seconds`)
+//     }, timeoutInSeconds * 1000)
+//   })
 
 const resolveWhenMined = async (
   web3: Web3,
@@ -52,11 +50,12 @@ const resolveWhenConfirmationsReached = async (
   }
 
   const actualConfirmations = latestBlock.number - minedBlockNumber
-  spinner.succeed(
-    `Reached ${numConfirmations} confirmations ${chalk.grey(
-      `(${actualConfirmations})`
-    )}`
-  )
+  const withActual =
+    actualConfirmations > numConfirmations
+      ? chalk.grey(`(actually ${actualConfirmations})`)
+      : ''
+
+  spinner.succeed(`Reached ${numConfirmations} confirmations ${withActual}`)
 }
 
 export const resolveWhenMinedWithConfirmations = async (
@@ -65,12 +64,12 @@ export const resolveWhenMinedWithConfirmations = async (
   numConfirmations: number
 ): Promise<Transaction> => {
   const spinner = ora(
-    `Waiting for transaction ${txHash} to be minded...`
+    `Waiting for transaction ${txHash} to be mined...`
   ).start()
 
   const minedTx = await resolveWhenMined(web3, txHash)
 
-  spinner.succeed(`Mined transaction ${txHash}`)
+  spinner.succeed(`Mined transaction ${txHash} `)
 
   if (numConfirmations > 0) {
     await resolveWhenConfirmationsReached(
@@ -86,11 +85,8 @@ export const resolveWhenMinedWithConfirmations = async (
 export const waitForMinedTransaction = async (
   txHash: string,
   numConfirmation = 0
-): Promise<Transaction | void> => {
+): Promise<Transaction> => {
   const web3 = getWeb3(EthereumNetwork.MAINNET)
 
-  return Promise.race([
-    resolveWhenMinedWithConfirmations(web3, txHash, numConfirmation),
-    timeoutAfterSeconds(TIMEOUT_IN_SECONDS),
-  ])
+  return resolveWhenMinedWithConfirmations(web3, txHash, numConfirmation)
 }

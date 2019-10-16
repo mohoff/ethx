@@ -13,7 +13,6 @@ ethx await <transactionHash> [--confirmations]
 
 ## Ideas
 
-- integrate timeout cli option for all commands
 - integrate etherscan api to get verrified contract code
   - parse contract name
   - parse event names --> hash all to find match with logs
