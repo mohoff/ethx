@@ -1,6 +1,6 @@
 # `ethx`
 
-Ethereum transaction pretty-printer. [Etherscan.io](https://etherscan.io/) for the command line.
+Ethereum transaction pretty-printer. [Etherscan.io](https://etherscan.io/) for the command line and CI.
 
 ## Install
 
