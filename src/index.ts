@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as yargs from 'yargs'
 import R from 'ramda'
 import chalk from 'chalk'
