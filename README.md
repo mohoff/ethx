@@ -12,12 +12,14 @@ npm install -g @mohoff/ethx
 
 ## Use
 
+You can use `ethx` to wait for a transaction to reach a certain number of network confirmations or simply pretty-print a mined transaction.
+
 ```sh
 # View transaction details
-ethx [view] <transactionHash> [--timeout]
+ethx [view] <transactionHash> -i infuraApiKey [-t timeout]
 
 # Wait for a transaction to reach a certain number of block confirmations and print its details.
-ethx await <transactionHash> [--confirmations] [--timeout]
+ethx await <transactionHash> -i infuraApiKey [-c confirmations] [-t timeout]
 ```
 
 ## Example
