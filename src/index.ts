@@ -38,6 +38,12 @@ const argv = yargs
           describe: 'Timeout in seconds until this command fails',
           default: VIEW_TIMEOUT_IN_SECONDS,
         })
+        .option('infura-api-key', {
+          alias: 'i',
+          type: 'string',
+          describe: 'Infura API Key used to query Ethereum',
+          demandOption: true,
+        })
     }
   )
   .command(
@@ -65,6 +71,12 @@ const argv = yargs
           // The termination of this command is primarily controlled with --confirmations
           default: Infinity,
         })
+        .option('infura-api-key', {
+          alias: 'i',
+          type: 'string',
+          describe: 'Infura API Key used to query Ethereum',
+          demandOption: true,
+        })
     }
   ).argv
 
@@ -74,12 +86,14 @@ const handleCliInput = async (): Promise<void> => {
   if (argv._[0] === COMMANDS.VIEW || argv._.length === 0) {
     await timeout(viewTx)(
       argv.transactionHash as string,
-      argv.timeout as number
+      argv.timeout as number,
+      argv.infuraApiKey as string
     )
   } else if (argv._[0] === COMMANDS.AWAIT) {
     await timeout(awaitTx)(
       argv.transactionHash as string,
-      argv.confirmations as number
+      argv.confirmations as number,
+      argv.infuraApiKey as string
     )
   }
 }

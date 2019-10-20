@@ -25,7 +25,8 @@ interface TransactionContext {
 }
 
 export const aggregateTransactionData = async (
-  txHash: string
+  txHash: string,
+  infuraApiKey: string
 ): Promise<TransactionContext | undefined> => {
   if (R.isNil(txHash) || !R.is(String, txHash)) {
     throw new Error('Invalid input')
@@ -35,7 +36,7 @@ export const aggregateTransactionData = async (
     throw new Error(`Invalid transaction hash ${txHash}`)
   }
 
-  const web3 = getWeb3(EthereumNetwork.MAINNET)
+  const web3 = getWeb3(infuraApiKey, EthereumNetwork.MAINNET)
 
   const tx = await web3.eth.getTransaction(txHash)
 

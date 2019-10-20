@@ -3,11 +3,16 @@ import { view } from './view'
 
 export const await = async (
   txHash: string,
-  numConfirmations: number
+  numConfirmations: number,
+  infuraApiKey: string
 ): Promise<void> => {
-  const minedTx = await waitForMinedTransaction(txHash, numConfirmations)
+  const minedTx = await waitForMinedTransaction(
+    txHash,
+    infuraApiKey,
+    numConfirmations
+  )
 
   if (minedTx) {
-    await view(txHash)
+    await view(txHash, infuraApiKey)
   }
 }

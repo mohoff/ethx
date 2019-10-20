@@ -26,6 +26,7 @@ export const VIEW_TIMEOUT_IN_SECONDS = 60
 
 export const view = async (
   txHash: string,
+  infuraApiKey: string,
   timeoutInSeconds: number = VIEW_TIMEOUT_IN_SECONDS
 ): Promise<void> => {
   const spinner = ora(`Fetching transaction details`).start()
@@ -33,7 +34,7 @@ export const view = async (
   const aggregateWithTimeout = timeoutAfter(timeoutInSeconds)(
     aggregateTransactionData
   )
-  const data = await aggregateWithTimeout(txHash)
+  const data = await aggregateWithTimeout(txHash, infuraApiKey)
 
   if (data === undefined) {
     throw new Error(`Transaction ${txHash} not found. Has it been mined?`)

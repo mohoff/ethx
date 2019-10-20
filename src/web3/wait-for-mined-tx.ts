@@ -84,9 +84,10 @@ export const resolveWhenMinedWithConfirmations = async (
 
 export const waitForMinedTransaction = async (
   txHash: string,
+  infuraApiKey: string,
   numConfirmation = 0
 ): Promise<Transaction> => {
-  const web3 = getWeb3(EthereumNetwork.MAINNET)
+  const web3 = getWeb3(infuraApiKey, EthereumNetwork.MAINNET)
 
   return resolveWhenMinedWithConfirmations(web3, txHash, numConfirmation)
 }
