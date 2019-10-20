@@ -24,7 +24,10 @@ ethx await <transactionHash> -i infuraApiKey [-c confirmations] [-t timeout]
 
 ## Example
 
-TODO: show terminal screenshot
+`ethx await 0xfd53c77168e1726db0bb95fcbd7f9c44bd3fbe55797b2ecefdbb3cd91744c527 -c 10 -i <infuraApiKey>`
+
+![Example](screenshot.png)
+
 
 ## Future features and ideas
 
