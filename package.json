@@ -1,6 +1,6 @@
 {
   "name": "ethx",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Ethereum transaction viewer",
   "main": "lib/index.js",
   "files": [
