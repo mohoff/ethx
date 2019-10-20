@@ -6,8 +6,12 @@
   "files": [
     "/lib"
   ],
-  "author": "Moritz Hoffmann",
+  "author": "Moritz Hoffmann <mohoff@web.de",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohoff/ethx.git"
+  },
   "scripts": {
     "health": "yarn lint && yarn test && yarn todo",
     "lint": "yarn lint:ts && yarn lint:json && yarn lint:markdown",
@@ -16,7 +20,7 @@
     "lint:json": "jsonlint-cli package.json src/**/*.json",
     "lint:markdown": "markdownlint **/*.md --ignore node_modules --ignore CHANGELOG.md --ignore .gitlab",
     "release": "standard-version --message \"chore(release): %s [ci-release]\"",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "todo": "leasot '**/*.ts' --ignore 'node_modules/**/*','lib/**/*','.git/**/*' || true",
     "watch": "tsc --watch",
     "clean": "rimraf lib/",
@@ -44,6 +48,7 @@
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-unicorn": "^12.0.1",
     "husky": "^3.0.7",
+    "jest": "^24.9.0",
     "jsonlint-cli": "^1.0.1",
     "lint-staged": "^9.4.0",
     "markdownlint-cli": "^0.18.0",

@@ -18,7 +18,7 @@ You can use `ethx` to wait for a transaction to reach a certain number of networ
 # View transaction details
 ethx [view] <transactionHash> -i infuraApiKey [-t timeout]
 
-# Wait for a transaction to reach a certain number of block confirmations and print its details.
+# Wait for a transaction to reach a certain number of network confirmations and print its details
 ethx await <transactionHash> -i infuraApiKey [-c confirmations] [-t timeout]
 ```
 
