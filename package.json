@@ -58,7 +58,7 @@
     "markdownlint-cli": "^0.18.0",
     "prettier": "^1.18.2",
     "rimraf": "^3.0.0",
-    "standard-version": "^7.0.0",
+    "standard-version": "^8.0.1",
     "ts-node": "^8.4.1",
     "typescript": "^3.6.4"
   },
